@@ -2,3 +2,4 @@
 // This module is browser compatible.
 
 export { compression } from "./middleware.ts";
+export type { Encode, Encoder, EncodingMap } from "./types.ts";
