@@ -58,12 +58,14 @@ Content-Encoding: <encoding>
 Vary: accept-encoding
 ```
 
-## Additional encoding
+## Built-in encoding
 
-By default, middleware supports the following encodings:
+Middleware supports the following encodings by default:
 
 - gzip
 - deflate
+
+## Additional encoding
 
 You can add supported encoding.
 
