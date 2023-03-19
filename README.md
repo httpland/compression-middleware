@@ -14,7 +14,10 @@ HTTP compression middleware.
 Compresses HTTP Content(body).
 
 Compliant with
-[RFC 9110, 8.4. Content-Encoding](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.4).
+[RFC 9110, 8.4. Content-Encoding](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.4)
+and
+[RFC 9110, 12.5.3. Accept-Encoding](https://www.rfc-editor.org/rfc/rfc9110.html#name-accept-encoding)
+.
 
 ## Middleware
 
@@ -165,6 +168,11 @@ Middleware is executed if all of the following conditions are met:
 - Response body exists
 - Response body is readable
 - Response body is [compressible](#compressible)
+
+## API
+
+All APIs can be found in the
+[deno doc](https://doc.deno.land/https/deno.land/x/compression_middleware/mod.ts).
 
 ## License
 
