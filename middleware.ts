@@ -9,10 +9,9 @@ import {
 import { withContentEncoding } from "./transform.ts";
 import { Gzip } from "./encoders/gzip.ts";
 import { Deflate } from "./encoders/deflate.ts";
-import { DeflateRaw } from "./encoders/deflate_raw.ts";
-import type { EncodeCallback, Encoder } from "./types.ts";
+import type { Encode, Encoder, EncodingMap } from "./types.ts";
 
-const DefaultEncoders: Encoder[] = [Gzip, Deflate, DeflateRaw];
+const DefaultEncoders: Encoder[] = [Gzip, Deflate];
 
 /** Create HTTP content compression middleware.
  *
@@ -37,12 +36,15 @@ const DefaultEncoders: Encoder[] = [Gzip, Deflate, DeflateRaw];
  * assertEquals(response.headers.get("content-encoding"), "gzip");
  * ```
  */
-export function compression(): Middleware {
-  const encoders = Object.fromEntries(DefaultEncoders.map(entry));
-  const encodings = Object.keys(encoders);
+export function compression(encoders?: Encoder[] | EncodingMap): Middleware {
+  const encodingMap = {
+    ...fromEncoders(DefaultEncoders),
+    ...Array.isArray(encoders) ? fromEncoders(encoders) : encoders,
+  };
+  const encodings = Object.keys(encodingMap);
 
   return async (request, next) => {
-    const encoding = acceptsEncodings(request, ...encodings, "identity");
+    const encoding = acceptsEncodings(request, ...encodings, IDENTITY);
     const response = await next(request);
 
     response.headers.append(
@@ -50,9 +52,9 @@ export function compression(): Middleware {
       ContentNegotiationHeader.AcceptEncoding,
     );
 
-    if (!encoding) return response;
+    if (!encoding || encoding === IDENTITY) return response;
 
-    const encode = encoders[encoding];
+    const encode = encodingMap[encoding];
 
     if (!encode) return response;
 
@@ -60,6 +62,12 @@ export function compression(): Middleware {
   };
 }
 
-function entry(encoder: Encoder): [encoding: string, encode: EncodeCallback] {
+function flat(encoder: Encoder): [encoding: string, encode: Encode] {
   return [encoder.encoding, encoder.encode];
 }
+
+function fromEncoders(encoders: readonly Encoder[]): EncodingMap {
+  return Object.fromEntries(encoders.map(flat));
+}
+
+const IDENTITY = "identity";

@@ -1,5 +1,12 @@
 import { compression } from "./middleware.ts";
-import { assert, describe, equalsResponse, it } from "./_dev_deps.ts";
+import {
+  assert,
+  assertSpyCalls,
+  describe,
+  equalsResponse,
+  it,
+  spy,
+} from "./_dev_deps.ts";
 
 describe("compression", () => {
   it(
@@ -10,12 +17,12 @@ describe("compression", () => {
         headers: { "accept-encoding": "test" },
       });
 
-      const response = await middleware(request, () => new Response(""));
+      const response = await middleware(request, () => new Response("a"));
 
       assert(
         await equalsResponse(
           response,
-          new Response("", { headers: { vary: "accept-encoding" } }),
+          new Response("a", { headers: { vary: "accept-encoding" } }),
           true,
         ),
       );
@@ -31,7 +38,7 @@ describe("compression", () => {
 
       const response = await middleware(request, () => new Response(""));
 
-      equalsResponse(
+      assert(equalsResponse(
         response,
         new Response("", {
           headers: {
@@ -39,7 +46,8 @@ describe("compression", () => {
             vary: "accept-encoding",
           },
         }),
-      );
+      ));
+
       await response.text();
     },
   );
@@ -53,7 +61,7 @@ describe("compression", () => {
     const content = "a".repeat(1000);
     const response = await middleware(request, () => new Response(content));
 
-    equalsResponse(
+    assert(equalsResponse(
       response,
       new Response("", {
         headers: {
@@ -61,7 +69,8 @@ describe("compression", () => {
           vary: "accept-encoding",
         },
       }),
-    );
+    ));
+
     const text = await response.text();
     assert(text.length < content.length);
   });
@@ -74,7 +83,7 @@ describe("compression", () => {
 
     const response = await middleware(request, () => new Response(""));
 
-    equalsResponse(
+    assert(equalsResponse(
       response,
       new Response("", {
         headers: {
@@ -82,7 +91,52 @@ describe("compression", () => {
           vary: "accept-encoding",
         },
       }),
-    );
+    ));
+
     await response.text();
+  });
+
+  it("should override default encoding", async () => {
+    const middleware = compression({ gzip: () => "def" });
+    const request = new Request("test:", {
+      headers: { "accept-encoding": "gzip" },
+    });
+
+    const response = await middleware(request, () => new Response("abc"));
+
+    assert(
+      await equalsResponse(
+        response,
+        new Response("def", {
+          headers: {
+            "content-encoding": "gzip",
+            vary: "accept-encoding",
+          },
+        }),
+        true,
+      ),
+    );
+  });
+
+  it("should skip if the accept-encoding is identity", async () => {
+    const fn = spy(() => "");
+    const middleware = compression({ identity: fn });
+    const request = new Request("test:", {
+      headers: { "accept-encoding": "identity" },
+    });
+
+    const response = await middleware(request, () => new Response("abc"));
+
+    assertSpyCalls(fn, 0);
+
+    assert(
+      await equalsResponse(
+        response,
+        new Response("abc", {
+          headers: { vary: "accept-encoding" },
+        }),
+        true,
+      ),
+    );
   });
 });
