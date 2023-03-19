@@ -1,3 +1,11 @@
+# [1.0.0-beta.2](https://github.com/httpland/compression-middleware/compare/1.0.0-beta.1...1.0.0-beta.2) (2023-03-19)
+
+
+### Features
+
+* **middleware:** change interface to accept iterable encoder ([008780f](https://github.com/httpland/compression-middleware/commit/008780fda4c82673721800007ea39fbf5015eaf9))
+* **mod:** export types for middleware ([7d785b8](https://github.com/httpland/compression-middleware/commit/7d785b881aa025ec13d9a2282cc2765e97770038))
+
 # 1.0.0-beta.1 (2023-03-19)
 
 
