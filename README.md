@@ -29,7 +29,7 @@ For a definition of Universal HTTP middleware, see the
 Middleware convert message body and adds the `Content-Encoding` header to the
 response.
 
-Also, safely add `Accept-Encoding` to the `vary` header in response.
+Also, safely add `Accept-Encoding` to the `Vary` header in response.
 
 ```ts
 import { compression } from "https://deno.land/x/compression_middleware@$VERSION/mod.ts";
