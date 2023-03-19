@@ -1,3 +1,6 @@
+// Copyright 2023-latest the httpland authors. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { RepresentationHeader } from "./deps.ts";
 
 const ReNoTransform = /(?:^|,)\s*?no-transform\s*?(?:,|$)/;
