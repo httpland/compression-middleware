@@ -16,5 +16,5 @@ export {
   isIterable,
   isNull,
 } from "https://deno.land/x/isx@1.0.0-beta.24/mod.ts";
-export { default as compressible } from "https://esm.sh/v110/compressible@2.0.18";
+export { default as compressible } from "https://esm.sh/compressible@2.0.18";
 export { vary } from "https://deno.land/x/vary@1.0.0/mod.ts";
