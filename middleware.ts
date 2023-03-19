@@ -4,6 +4,7 @@
 import {
   acceptsEncodings,
   ContentNegotiationHeader,
+  isIterable,
   type Middleware,
   vary,
 } from "./deps.ts";
@@ -12,7 +13,7 @@ import { Gzip } from "./encoders/gzip.ts";
 import { Deflate } from "./encoders/deflate.ts";
 import type { Encode, Encoder, EncodingMap } from "./types.ts";
 
-const DefaultEncoders: Encoder[] = [Gzip, Deflate];
+const BuiltInEncoders: Encoder[] = [Gzip, Deflate];
 
 /** Create HTTP content compression middleware.
  *
@@ -37,10 +38,12 @@ const DefaultEncoders: Encoder[] = [Gzip, Deflate];
  * assertEquals(response.headers.get("content-encoding"), "gzip");
  * ```
  */
-export function compression(encoders?: Encoder[] | EncodingMap): Middleware {
+export function compression(
+  encoders?: Iterable<Encoder> | EncodingMap,
+): Middleware {
   const encodingMap = {
-    ...fromEncoders(DefaultEncoders),
-    ...Array.isArray(encoders) ? fromEncoders(encoders) : encoders,
+    ...fromEncoders(BuiltInEncoders),
+    ...isIterable(encoders) ? fromEncoders(encoders) : encoders,
   };
   const encodings = Object.keys(encodingMap);
 
@@ -64,8 +67,8 @@ export function flat(encoder: Encoder): [encoding: string, encode: Encode] {
   return [encoder.encoding, encoder.encode];
 }
 
-export function fromEncoders(encoders: readonly Encoder[]): EncodingMap {
-  return Object.fromEntries(encoders.map(flat));
+export function fromEncoders(encoders: Iterable<Encoder>): EncodingMap {
+  return Object.fromEntries(Array.from(encoders).map(flat));
 }
 
 const IDENTITY = "identity";
