@@ -27,6 +27,30 @@ describe("withContentEncoding", () => {
     );
   });
 
+  it("should re-calculate content length if the response has content-length header", async () => {
+    const encode = spy(() => "abc");
+
+    const initResponse = new Response("abcdef", {
+      headers: { "content-length": "6" },
+    });
+
+    const response = await withContentEncoding(initResponse, {
+      encoding: "xxx",
+      encode,
+    });
+
+    assertSpyCalls(encode, 1);
+    assert(
+      await equalsResponse(
+        response,
+        new Response("abc", {
+          headers: { "content-length": "3", "content-encoding": "xxx" },
+        }),
+        true,
+      ),
+    );
+  });
+
   it("should not apply if the response does not have content-type header", async () => {
     const encode = spy(() => "abc");
 

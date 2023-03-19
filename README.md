@@ -148,6 +148,30 @@ compressible.
 For example, image media such as `image/jpag` is not compressible because it is
 already compressed.
 
+## Content-Length
+
+If the Response has a `Content-Length` header, compression may cause the actual
+content length to deviate.
+
+In that case, the `Content-Length` is recalculated.
+
+```ts
+import { compression } from "https://deno.land/x/compression_middleware@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
+
+declare const request: Request;
+const middleware = compression();
+
+const response = await middleware(
+  request,
+  () =>
+    new Response("<body>", { headers: { "content-length": "<body:length>" } }),
+);
+
+assertEquals(await response.text(), "<gzip:body>");
+assertEquals(response.headers.get("content-length"), "<gzip:body:length>");
+```
+
 ## Effects
 
 Middleware may make changes to the following elements of the HTTP message.
@@ -156,6 +180,7 @@ Middleware may make changes to the following elements of the HTTP message.
 - HTTP Headers
   - Content-Encoding
   - Vary
+  - [Content-Length](#content-length)
 
 ## Conditions
 

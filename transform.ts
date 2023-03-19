@@ -8,7 +8,7 @@ import {
   parseMediaType,
   RepresentationHeader,
 } from "./deps.ts";
-import { isNoTransform } from "./utils.ts";
+import { isNoTransform, reCalcContentLength } from "./utils.ts";
 import type { Encoder } from "./types.ts";
 
 /** Response with `Content-Encoding` header. */
@@ -33,7 +33,9 @@ export async function withContentEncoding(
   if (!isCompressible) return response;
 
   const bodyInit = await context.encode(response.body);
-  const newResponse = new Response(bodyInit, response);
+  const newResponse = await reCalcContentLength(
+    new Response(bodyInit, response),
+  );
 
   newResponse.headers.set(
     RepresentationHeader.ContentEncoding,
