@@ -112,8 +112,8 @@ Example of adding `brotli` encoding:
 ```ts
 import {
   compression,
+  type Encode,
   type Encoder,
-  type EncodingMap,
 } from "https://deno.land/x/compression_middleware@$VERSION/mod.ts";
 
 declare const encodeBr: Encode;
@@ -128,7 +128,7 @@ const middleware = compression([Br]);
 
 ```ts
 interface Encode {
-  (stream: ReadableStream<Unit8Array>): BodyInit | Promise<BodyInit>;
+  (stream: ReadableStream<Uint8Array>): BodyInit | Promise<BodyInit>;
 }
 ```
 
