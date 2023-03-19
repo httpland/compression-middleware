@@ -97,8 +97,30 @@ describe("compression", () => {
     await response.text();
   });
 
-  it("should override default encoding", async () => {
+  it("should override default encoding by providing encoding map", async () => {
     const middleware = compression({ gzip: () => "def" });
+    const request = new Request("test:", {
+      headers: { "accept-encoding": "gzip" },
+    });
+
+    const response = await middleware(request, () => new Response("abc"));
+
+    assert(
+      await equalsResponse(
+        response,
+        new Response("def", {
+          headers: {
+            "content-encoding": "gzip",
+            vary: "accept-encoding",
+          },
+        }),
+        true,
+      ),
+    );
+  });
+
+  it("should override default encoding by providing encoder", async () => {
+    const middleware = compression([{ encoding: "gzip", encode: () => "def" }]);
     const request = new Request("test:", {
       headers: { "accept-encoding": "gzip" },
     });
@@ -152,8 +174,6 @@ describe("compression", () => {
       request,
       () => new Response("abc", { headers: { "vary": "Accept-Encoding" } }),
     );
-
-    console.log(response);
 
     assert(
       await equalsResponse(
