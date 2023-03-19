@@ -5,6 +5,7 @@ import {
   acceptsEncodings,
   ContentNegotiationHeader,
   type Middleware,
+  vary,
 } from "./deps.ts";
 import { withContentEncoding } from "./transform.ts";
 import { Gzip } from "./encoders/gzip.ts";
@@ -47,10 +48,7 @@ export function compression(encoders?: Encoder[] | EncodingMap): Middleware {
     const encoding = acceptsEncodings(request, ...encodings, IDENTITY);
     const response = await next(request);
 
-    response.headers.append(
-      ContentNegotiationHeader.Vary,
-      ContentNegotiationHeader.AcceptEncoding,
-    );
+    vary(response.headers, ContentNegotiationHeader.AcceptEncoding);
 
     if (!encoding || encoding === IDENTITY) return response;
 
@@ -62,11 +60,11 @@ export function compression(encoders?: Encoder[] | EncodingMap): Middleware {
   };
 }
 
-function flat(encoder: Encoder): [encoding: string, encode: Encode] {
+export function flat(encoder: Encoder): [encoding: string, encode: Encode] {
   return [encoder.encoding, encoder.encode];
 }
 
-function fromEncoders(encoders: readonly Encoder[]): EncodingMap {
+export function fromEncoders(encoders: readonly Encoder[]): EncodingMap {
   return Object.fromEntries(encoders.map(flat));
 }
 

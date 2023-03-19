@@ -1,6 +1,7 @@
-import { compression } from "./middleware.ts";
+import { compression, flat, fromEncoders } from "./middleware.ts";
 import {
   assert,
+  assertEquals,
   assertSpyCalls,
   describe,
   equalsResponse,
@@ -138,5 +139,49 @@ describe("compression", () => {
         true,
       ),
     );
+  });
+
+  it("should not exist duplicated vary field values", async () => {
+    const fn = spy(() => "");
+    const middleware = compression({ identity: fn });
+    const request = new Request("test:", {
+      headers: { "accept-encoding": "identity" },
+    });
+
+    const response = await middleware(
+      request,
+      () => new Response("abc", { headers: { "vary": "Accept-Encoding" } }),
+    );
+
+    console.log(response);
+
+    assert(
+      await equalsResponse(
+        response,
+        new Response("abc", {
+          headers: { vary: "Accept-Encoding" },
+        }),
+        true,
+      ),
+    );
+  });
+});
+
+describe("fromEncoders", () => {
+  it("should return record of encoding", () => {
+    const encode = () => "";
+
+    assertEquals(
+      fromEncoders([{ encoding: "abc", encode }, { encoding: "efg", encode }]),
+      { abc: encode, efg: encode },
+    );
+  });
+});
+
+describe("flat", () => {
+  it("should return set of encoding", () => {
+    const encode = () => "";
+
+    assertEquals(flat({ encoding: "abc", encode }), ["abc", encode]);
   });
 });
