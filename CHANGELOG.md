@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/httpland/compression-middleware/compare/1.0.0...1.1.0) (2023-04-02)
+
+
+### Features
+
+* **deps:** update deps version ([c8a343d](https://github.com/httpland/compression-middleware/commit/c8a343d90e74c9b205336a8d3874ffba01cc3a5c))
+
 # [1.1.0-beta.1](https://github.com/httpland/compression-middleware/compare/1.0.0...1.1.0-beta.1) (2023-04-02)
 
 
