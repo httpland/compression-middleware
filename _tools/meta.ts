@@ -48,7 +48,7 @@ export const makeOptions = (version: string): BuildOptions => ({
     },
   },
   mappings: {
-    "https://esm.sh/compressible@2.0.18": {
+    "https://esm.sh/compressible@2.0.18?pin=v111": {
       name: "compressible",
       version: "2.0.18",
     },
