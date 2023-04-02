@@ -42,9 +42,13 @@ export const makeOptions = (version: string): BuildOptions => ({
     publishConfig: {
       access: "public",
     },
+    dependencies: {
+      "@types/compressible": "2.0.0",
+      "@types/node": "^18",
+    },
   },
   mappings: {
-    "https://esm.sh/compressible@2.0.18": {
+    "https://esm.sh/compressible@2.0.18?pin=v111": {
       name: "compressible",
       version: "2.0.18",
     },
@@ -52,13 +56,20 @@ export const makeOptions = (version: string): BuildOptions => ({
       name: "@httpland/http-middleware",
       version: "1.0.0",
     },
-    "https://deno.land/x/http_utils@1.0.0-beta.13/header.ts": {
-      name: "@httpland/http-utils",
-      version: "1.0.0-beta.13",
+    "https://deno.land/x/isx@1.1.1/is_null.ts": {
+      name: "@miyauci/isx",
+      version: "1.1.1",
+      subPath: "is_null",
     },
-    "https://deno.land/x/isx@1.0.0-beta.24/mod.ts": {
-      name: "isxx",
-      version: "1.0.0-beta.24",
+    "https://deno.land/x/isx@1.1.1/is_iterable.ts": {
+      name: "@miyauci/isx",
+      version: "1.1.1",
+      subPath: "is_iterable",
+    },
+    "https://deno.land/x/http_utils@1.0.0/header.ts": {
+      name: "@httpland/http-utils",
+      version: "1.0.0",
+      subPath: "header.js",
     },
   },
   packageManager: "pnpm",
